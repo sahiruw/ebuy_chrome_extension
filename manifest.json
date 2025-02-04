@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "eBuy Link Extractor",
+    "version": "1.0",
+    "description": "Lists all clickable URLs on eBuy GSA with selection options",
+    "permissions": ["activeTab", "scripting"],
+    "host_permissions": ["https://www.ebuy.gsa.gov/"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": "icon.png"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://www.ebuy.gsa.gov/*"],
+        "js": ["content.js"]
+      }
+    ]
+  }
+  

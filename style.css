@@ -1,0 +1,36 @@
+body {
+    width: 300px;
+    font-family: Arial, sans-serif;
+    padding: 10px;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+#linksContainer {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.link-item {
+    display: flex;
+    align-items: center;
+}
+
+button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
