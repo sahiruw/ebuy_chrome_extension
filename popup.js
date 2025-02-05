@@ -4,33 +4,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const deselectAllBtn = document.getElementById("deselectAll");
     const downloadBtn = document.getElementById("download");
 
-    // Request links from content script
+    // Request list of attachments from the content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.scripting.executeScript(
             {
                 target: { tabId: tabs[0].id },
-                function: extractLinks
+                function: extractAttachments
             },
             (results) => {
                 if (results && results[0] && results[0].result) {
-                    let extractedLinks = JSON.parse(results[0].result); // Parse JSON string
-                    console.log("Extracted Links:", extractedLinks);
+                    let extractedLinks = JSON.parse(results[0].result);
                     displayLinks(extractedLinks);
-                } else {
-                    console.error("No results returned from content script.");
                 }
             }
         );
     });
 
-    // Display links with checkboxes
+    // Display extracted links with checkboxes
     function displayLinks(links) {
         linksContainer.innerHTML = "";
         links.forEach((link, index) => {
             const div = document.createElement("div");
             div.classList.add("link-item");
-            div.innerHTML = `<input type="checkbox" class="link-checkbox" id="chk${index}" data-url="${link}">
-                             <label for="chk${index}">${link}</label>`;
+            div.innerHTML = `<input type="checkbox" class="link-checkbox" id="chk${index}" data-id="${link.id}">
+                             <label for="chk${index}">${link.name}</label>`;
             linksContainer.appendChild(div);
         });
 
@@ -57,10 +54,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Update count when checkboxes are toggled
     linksContainer.addEventListener("change", updateSelectedCount);
+
+    // Handle Download Button Click
+    downloadBtn.addEventListener("click", () => {
+        const selectedIds = [];
+        document.querySelectorAll(".link-checkbox:checked").forEach(cb => {
+            selectedIds.push(cb.getAttribute("data-id"));
+        });
+
+        if (selectedIds.length > 0) {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    function: clickAttachments,
+                    args: [selectedIds]
+                });
+            });
+        }
+    });
 });
 
 
-function extractLinks() {
-    let links = [...document.querySelectorAll("a[href]")].map(a => a.href);
-    return JSON.stringify([...new Set(links)]); // Convert to JSON string
+function clickAttachments(selectedIds) {
+    selectedIds.forEach(id => {
+        let attachment = document.getElementById(id);
+        if (attachment) {
+            attachment.click(); // Simulate user clicking the link
+        }
+    });
+}
+
+
+
+function extractAttachments() {
+    let attachments = [];
+
+    document.querySelectorAll("#rfq-display-attachments-list a").forEach((a, index) => {
+        let fileName = a.innerText.trim();
+        let id = a.id; // Get the unique ID of the <a> tag
+
+        if (fileName && id) {
+            attachments.push({ name: fileName, id: id });
+        }
+    });
+
+    return JSON.stringify([...new Set(attachments)]); // Remove duplicates
 }
