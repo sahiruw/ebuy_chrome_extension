@@ -63,27 +63,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (selectedIds.length > 0) {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                chrome.scripting.executeScript({
-                    target: { tabId: tabs[0].id },
-                    function: clickAttachments,
-                    args: [selectedIds]
-                });
-            });
+            chrome.runtime.sendMessage({ action: "simulateClick", ids: selectedIds });
         }
     });
 });
-
-
-function clickAttachments(selectedIds) {
-    selectedIds.forEach(id => {
-        let attachment = document.getElementById(id);
-        if (attachment) {
-            attachment.click(); // Simulate user clicking the link
-        }
-    });
-}
-
 
 
 function extractAttachments() {
@@ -99,4 +82,13 @@ function extractAttachments() {
     });
 
     return JSON.stringify([...new Set(attachments)]); // Remove duplicates
+}
+
+function simulateUserClicks(selectedIds) {
+    selectedIds.forEach(id => {
+        let attachment = document.getElementById(id);
+        if (attachment) {
+            attachment.click(); // Simulate user clicking the link
+        }
+    });
 }
