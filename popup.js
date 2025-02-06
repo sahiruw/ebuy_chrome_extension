@@ -63,7 +63,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (selectedIds.length > 0) {
+            // alert("Downloading selected attachments. Please wait for the download to complete.");
             chrome.runtime.sendMessage({ action: "simulateClick", ids: selectedIds });
+            alert("Downloading selected attachments. Please wait for the download to complete.");
         }
     });
 });

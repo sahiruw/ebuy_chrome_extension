@@ -27,6 +27,7 @@ chrome.downloads.onCreated.addListener((downloadItem) => {
 
 
 function simulateUserClicks(selectedIds) {
+    console.log("Simulating user clicks for attachments: ", selectedIds);
     selectedIds.forEach(id => {
         let attachment = document.getElementById(id);
         if (attachment) {
